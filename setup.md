@@ -79,3 +79,50 @@ The "map" frame in ROS typically refers to the global reference frame in the env
 
 The base_link frame represents the reference frame attached to the robot's base or chassis. Its used for navigation algorithms, such as path planning and obstacle avoidance, typically plan trajectories and control robot motion relative to the base_link frame.
 
+# On the real turtlebot 4
+
+## Requirements
+
+- Ubuntu 22.04 or higher
+- ROS2 Humble
+- Turtlebot 4 
+- Rviz
+
+## Install navigation
+
+If you have setup the discovery correctly, either with simple discovery or with discovery server, you should be seeing all topics of the turtle bot when running `ros2 topic list`. If you don't have those, refer to https://turtlebot.github.io/turtlebot4-user-manual/setup/simple_discovery.html or https://turtlebot.github.io/turtlebot4-user-manual/setup/discovery_server.html
+
+if everything is setup correctly, run `sudo apt install ros-humble-turtlebot4-navigation`
+
+## Generate your first map
+
+- `ros2 launch turtlebot4_navigation slam.launch.py` to run the SLAM module
+- in another terminal `ros2 launch turtlebot4_viz view_robot.launch.py` to see the generated map in rviz
+
+- drive your turtlebot around so that the whole map is generated
+- save the map using ```ros2 service call /slam_toolbox/save_map slam_toolbox/srv/SaveMap "name:
+  data: 'map_name'"``` change map_name to the name you want to give to your map, that map will be saved as one pgm file and one yaml file in your current directory.
+
+## Navigate your turtlebot through the map
+
+Now that the map is generated, you naturally want your turtlebot to navigate through the environment:
+
+- `ros2 launch turtlebot4_navigation localization.launch.py map:=your_map.yaml` replace 'your_map' with the path of the map you created
+- run nav2 in another terminal `ros2 launch turtlebot4_navigation nav2.launch.py`
+- run rviz in a third terminal `ros2 launch turtlebot4_viz view_robot.launch.py`
+
+
+
+points of interest: 
+
+- top right: x: -7.257583141326904
+  y: 5.210980415344238
+  z: 0.006439208984375
+
+- bottom left: x: -0.2845604717731476
+  y: 1.1673636436462402
+  z: 0.002471923828125
+
+- hallway: x: -7.777319431304932
+  y: -1.050632357597351
+  z: -0.005340576171875

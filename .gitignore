@@ -1,0 +1,10 @@
+# VS code
+*.vscode
+
+# Colcon build
+build/
+install/
+log/
+
+# Python
+__pycache__/
