@@ -4,6 +4,9 @@ import rclpy
 from rclpy.node import Node
 from turtlebot4_navigation.turtlebot4_navigator import TurtleBot4Directions, TurtleBot4Navigator
 from std_msgs.msg import String
+import json
+import os
+from ament_index_python.packages import get_package_share_directory
 
 class NavigatorNode(Node):
     def __init__(self):
@@ -23,6 +26,11 @@ class NavigatorNode(Node):
         # Wait for Nav2
         self.navigator.waitUntilNav2Active()
 
+        self.get_logger().info('Retrieving commands...')
+        self.commands = self.retrieve_commands()
+        self.get_logger().info('Commands retrieved')
+        self.get_logger().info(self.commands)
+
         self.subscription = self.create_subscription(
             String,
             '/pose_listener',
@@ -30,6 +38,15 @@ class NavigatorNode(Node):
             10)
         self.get_logger().info('listening to /pose_listener topic')
         self.subscription
+
+    def retrieve_commands(self):
+        package_share_directory = get_package_share_directory('nav_module_controller')
+        json_file_path = os.path.join(package_share_directory, 'resource', 'commands.json')
+
+        with open(json_file_path, 'r') as file:
+            goals = json.load(file)
+        return goals
+
 
     def listener_callback(self, msg):
         goal_location = msg.data
@@ -55,15 +72,3 @@ class NavigatorNode(Node):
 
         if goal_location == 'dock':
             self.navigator.dock()
-
-def main():
-    rclpy.init()
-
-    pose_subscriber = NavigatorNode()
-    pose_subscriber.get_logger().info('Pose subscriber node is running...')
-    rclpy.spin(pose_subscriber)
-
-    rclpy.shutdown()
-
-if __name__ == '__main__':
-    main()
