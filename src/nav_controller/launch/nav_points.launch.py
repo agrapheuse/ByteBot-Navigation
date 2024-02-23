@@ -18,4 +18,9 @@ def generate_launch_description():
             executable='clicked_point_listener.py',
             name='clicked_point_listener'
         ),
+        Node(
+            package='nav_controller',
+            executable='add_waypoint.py',
+            name='add_waypoint'
+        ),
     ])
