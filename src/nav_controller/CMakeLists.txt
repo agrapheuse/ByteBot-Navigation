@@ -20,9 +20,19 @@ install(PROGRAMS
   DESTINATION lib/${PROJECT_NAME}
 )
 
+install(PROGRAMS
+  scripts/show_commands.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 # install the launch directory
 install(DIRECTORY
   launch
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+install(DIRECTORY
+  nav_controller/resources
   DESTINATION share/${PROJECT_NAME}/
 )
 

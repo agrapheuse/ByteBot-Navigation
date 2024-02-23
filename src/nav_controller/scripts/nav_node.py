@@ -2,6 +2,7 @@
 
 import rclpy
 from nav_controller.nodes.nav_points import NavigatorNode
+from nav_controller.nodes.show_all_commands import ShowCommands
 
 def main():
     rclpy.init()
