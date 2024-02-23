@@ -15,19 +15,13 @@ include_directories(include)
 
 ament_python_install_package(${PROJECT_NAME})
 
+# Install all scripts
 install(PROGRAMS
   scripts/nav_node.py
-  DESTINATION lib/${PROJECT_NAME}
-)
-
-install(PROGRAMS
   scripts/show_commands.py
-  DESTINATION lib/${PROJECT_NAME}
-)
-
-install(PROGRAMS
   scripts/clicked_point_listener.py
-  DESTINATION lib/${PROJECT_NAME}  
+  scripts/add_waypoint.py
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 # install the launch directory
