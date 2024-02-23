@@ -5,7 +5,12 @@ def generate_launch_description():
     return LaunchDescription([
         Node(
             package='nav_controller',
-            node_executable='nav_points',
+            executable='nav_node.py',
             name='navigation_controller'
+        ),
+        Node(
+            package='nav_controller',
+            executable='show_commands.py',
+            name='show_all_commands'
         )
     ])
