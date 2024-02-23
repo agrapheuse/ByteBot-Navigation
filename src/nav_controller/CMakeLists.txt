@@ -25,6 +25,11 @@ install(PROGRAMS
   DESTINATION lib/${PROJECT_NAME}
 )
 
+install(PROGRAMS
+  scripts/clicked_point_listener.py
+  DESTINATION lib/${PROJECT_NAME}  
+)
+
 # install the launch directory
 install(DIRECTORY
   launch

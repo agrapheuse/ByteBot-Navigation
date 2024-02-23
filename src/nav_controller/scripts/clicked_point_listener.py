@@ -7,8 +7,8 @@ from nav_controller.nodes.clicked_point_listener import ClickedPointListener
 def main():
     rclpy.init()
 
-    command_lister = ShowCommands()
-    rclpy.spin(command_lister)
+    clicked_point_listener = ClickedPointListener()
+    rclpy.spin(clicked_point_listener)
 
     rclpy.shutdown()
 
