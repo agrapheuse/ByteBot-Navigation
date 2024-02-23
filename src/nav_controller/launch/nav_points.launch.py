@@ -12,5 +12,10 @@ def generate_launch_description():
             package='nav_controller',
             executable='show_commands.py',
             name='show_all_commands'
-        )
+        ),
+        Node(
+            package='nav_controller',
+            executable='clicked_point_listener.py',
+            name='clicked_point_listener'
+        ),
     ])
