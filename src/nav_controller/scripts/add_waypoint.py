@@ -2,12 +2,12 @@
 
 import rclpy
 from nav_controller.nodes.show_all_commands import ShowCommands
-from nav_controller.nodes.add_waypoint import AddWaypoint
+from nav_controller.nodes.add_waypoint import AddWayPoint
 
 def main():
     rclpy.init()
 
-    add_waypoint = AddWaypoint()
+    add_waypoint = AddWayPoint()
     rclpy.spin(add_waypoint)
 
     rclpy.shutdown()
