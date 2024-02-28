@@ -5,7 +5,7 @@
 - Ubuntu 22.04 or higher
 - ROS2 Humble
 
-This setup tutorial assumes that ROS2 is already installed and is setup to run nodes.
+This setup tutorial assumes that ROS2 is already installed and is setup to build and run nodes.
 
 ## Install useful tools
 
@@ -90,7 +90,7 @@ The base_link frame represents the reference frame attached to the robot's base 
 
 ## Install navigation
 
-If you have setup the discovery correctly, either with simple discovery or with discovery server, you should be seeing all topics of the turtle bot when running `ros2 topic list`. If you don't have those, refer to https://turtlebot.github.io/turtlebot4-user-manual/setup/simple_discovery.html or https://turtlebot.github.io/turtlebot4-user-manual/setup/discovery_server.html
+If you have setup the discovery correctly, either with simple discovegit@gitlab.com:kdg-ti/the-lab/teams-23-24/bytebot/navigation.gitry or with discovery server, you should be seeing all topics of the turtle bot when running `ros2 topic list`. If you don't have those, refer to https://turtlebot.github.io/turtlebot4-user-manual/setup/simple_discovery.html or https://turtlebot.github.io/turtlebot4-user-manual/setup/discovery_server.html
 
 if everything is setup correctly, run `sudo apt install ros-humble-turtlebot4-navigation`
 
@@ -111,18 +111,32 @@ Now that the map is generated, you naturally want your turtlebot to navigate thr
 - run nav2 in another terminal `ros2 launch turtlebot4_navigation nav2.launch.py`
 - run rviz in a third terminal `ros2 launch turtlebot4_viz view_robot.launch.py`
 
+## Run the navigation module
 
+### Clone the Repository
 
-points of interest: 
+- run `git clone git@gitlab.com:kdg-ti/the-lab/teams-23-24/bytebot/navigation.git`
+This will have created the `navigation` directory, run `ls` to make sure it's there, then go in it using `cd navigation`
+- run `colcon build`
+If there are no issues when building, you are ready for the next step
 
-- top right: x: -7.257583141326904
-  y: 5.210980415344238
-  z: 0.006439208984375
+### Run the nav module
 
-- bottom left: x: -0.2845604717731476
-  y: 1.1673636436462402
-  z: 0.002471923828125
+When all three terminals from the "Navigate your turtlebot through the map" are running, you should be able to run the navigation module
+- in a 4th terminal, run `ros2 launch nav_controller nav_points.launch.py`
+This will run 4 nodes:
 
-- hallway: x: -7.777319431304932
-  y: -1.050632357597351
-  z: -0.005340576171875
+#### nav_points
+- gives you the possibility to give it commands (points to go to) and the turtlebot will go to those points.
+- First you need to undock it: `ros2 topic pub /pose_listener std_msgs/msg/String "data: 'undock'" -1`
+- then you can use the same command to give it a point to go to: `ros2 topic pub /pose_listener std_msgs/msg/String "data: 'entrance'" -1`
+- To dock it again, run: `ros2 topic pub /pose_listener std_msgs/msg/String "data: 'dock'" -1`
+
+#### show_all_commands
+- If you want to know all the commands you can use: `ros2 topic pub /commands std_msgs/msg/String "data: 'list'" -1`
+
+#### clicked_point_listener
+- If you want to add a new point, you first need to know the coordinates of that point. To do that, you can go on rviz, select "publish point" on the top menu. After that you can click anywhere on the map to select a point. that point will then be shown on the same terminal where u launched the nav_controller
+
+#### add_waypoint
+- to add a new waypoint, you need to run this command: `ros2 topic pub /add_waypoint nav_module_interfaces/msg/TargetCoordinates '{name: "my_new_waypoint", coordinates: {x: -7.703, y: -4.424, z: 0.0}}' -1` you can change the name of the waypoint and the coordinates. We recommend to have z always at 0.
