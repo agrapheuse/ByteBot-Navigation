@@ -1,22 +1,22 @@
 {
     "entrance": {
-        "position": [-6.298, -6.960],
+        "position": [2.605, -4.070],
         "orientation": 180,
         "description": "Entrance of the room"
     },
     "corner": {
-        "position": [-3.962, 1.700],
+        "position": [-3.0451, -6.086],
         "orientation": 90,
         "description": "Top left corner of the room"
     },
-    "storage_room": {
-        "position": [-18.420, -6.012],
+    "storage room": {
+        "position": [2.231, -2.489],
         "orientation": 90,
         "description": "Cisco storage room"
     },
-    "dock": {
-        "position": [0.104, 0.063],
-        "orientation": 45,
+    "sleep": {
+        "position": [-0.0047, -0.018],
+        "orientation": 0,
         "description": "Dock"
     }
 }

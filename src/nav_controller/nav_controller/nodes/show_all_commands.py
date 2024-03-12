@@ -12,16 +12,21 @@ class ShowCommands(Node):
         self.get_logger().info('Initialising show commands node...')
         self.subscription = self.create_subscription(
             String,
-            '/commands',
+            '/pose_listener',
             self.listener_callback,
             10)
-        self.get_logger().info('listening to /commands topic, publish "list" to see all commands.')
         self.subscription
 
     def listener_callback(self, msg):
         list_of_commands = self.retrieve_commands()
         if msg.data == 'list':
             self.get_logger().info('List of commands:')
+            self.get_logger().info('-----------------')
+            self.get_logger().info('sleep')
+            self.get_logger().info('wake up')
+            self.get_logger().info('stop')
+            self.get_logger().info('patrol')
+
             for i in list_of_commands:
                 self.get_logger().info(i)
 

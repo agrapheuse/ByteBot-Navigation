@@ -31,6 +31,7 @@ install(DIRECTORY
   DESTINATION share/${PROJECT_NAME}/
 )
 
+# install the resources directory
 install(DIRECTORY
   nav_controller/resources
   DESTINATION share/${PROJECT_NAME}/
