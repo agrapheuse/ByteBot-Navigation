@@ -33,11 +33,16 @@ def generate_launch_description():
             executable='clicked_point_listener.py',
             name='clicked_point_listener'
         ),
+        # Node(
+        #     package='nav_controller',
+        #     executable='add_waypoint.py',
+        #     name='add_waypoint'
+        # ),
         Node(
-            package='nav_controller',
-            executable='add_waypoint.py',
-            name='add_waypoint'
-        ),
+            package="nav_controller",
+            executable="change_state_node.py",
+            name="change_state"
+        )
         # ExecuteProcess(
         #     cmd=['ros2', 'launch', 'turtlebot4_navigation', 'localization.launch.py', 'map:=room505.yaml'],
         #     output='screen',

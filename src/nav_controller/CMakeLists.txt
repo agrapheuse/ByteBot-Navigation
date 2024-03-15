@@ -22,6 +22,7 @@ install(PROGRAMS
   scripts/show_commands.py
   scripts/clicked_point_listener.py
   scripts/add_waypoint.py
+  scripts/change_state_node.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -35,6 +36,12 @@ install(DIRECTORY
 install(DIRECTORY
   nav_controller/resources
   DESTINATION share/${PROJECT_NAME}/
+)
+
+# Install the state json file
+install(DIRECTORY
+  nav_controller/state
+  DESTINATION share/${PROJECT_NAME}
 )
 
 ament_package()

@@ -17,14 +17,17 @@ class NavigatorNode(Node):
         self.turtlebot4_navigator = TurtleBot4Navigator()
 
         self.navigation_task = None  # Variable to track the current navigation task
+        self.package_share_directory = get_package_share_directory('nav_controller')
+        self.state_path = os.path.join(self.package_share_directory, 'state', 'patrol_state.json')
 
+        self.save_state("None")
         # Start on dock
         if not self.turtlebot4_navigator.getDockedStatus():
             self.turtlebot4_navigator.info('Docking before initialising pose')
             self.turtlebot4_navigator.dock()
 
         # Set initial pose
-        initial_pose = self.turtlebot4_navigator.getPoseStamped([-0.0047, -0.018], TurtleBot4Directions.NORTH_WEST) # cisco room
+        initial_pose = self.turtlebot4_navigator.getPoseStamped([-0.813, 1.171], TurtleBot4Directions.NORTH) # cisco room
         # initial_pose = self.navigator.getPoseStamped([0.017, -0.019], TurtleBot4Directions.NORTH) # 505 room
         self.navigator.setInitialPose(initial_pose)
 
@@ -60,17 +63,16 @@ class NavigatorNode(Node):
         self.retrieve_commands()
         command = msg.data
         if command == 'stop':
-            if self.navigation_task is not None:
-                self.get_logger().info('Stopping current task...')
-                self.navigator.cancelTask()
-                self.navigation_task = None
-            return
+            msg = String()
+            msg.data = "None"
+            self.vision_publisher.publish(msg)
+            self.stop_task()
 
         elif command == 'sleep':
-            if self.navigation_task is not None:
-                self.get_logger().info('Stopping current task...')
-                self.navigator.cancelTask()
-                self.navigation_task = None
+            self.stop_task()
+            msg = String()
+            msg.data = "None"
+            self.vision_publisher.publish(msg)
 
             if self.turtlebot4_navigator.getDockedStatus():
                 self.get_logger().info('Already docked')
@@ -81,6 +83,15 @@ class NavigatorNode(Node):
 
             # Start new navigation task
             self.navigation_task = self.navigator.goToPose(goal_pose)
+
+            self.save_state('go_to_goal')
+            while not self.navigator.isTaskComplete():
+                with open(self.state_path, 'r') as file:
+                    self.state = json.load(file)
+                if self.state == 'None':
+                    self.get_logger().info('nav to goal interrupted...')
+                    self.stop_task()
+                    return  
 
             self.turtlebot4_navigator.dock()
 
@@ -93,16 +104,24 @@ class NavigatorNode(Node):
 
             goal_pose = []
             for i in self.goals:
-                self.get_logger().info(i)
+                msg = String()
+                msg.data = "patrolling"
+                self.vision_publisher.publish(msg)
+                self.save_state('patrolling')
+                
                 position = self.goals[i]['position']
-                orientation = self.goals[i]['orientation']
-                goal_pose.append(self.turtlebot4_navigator.getPoseStamped(position, TurtleBot4Directions(orientation)))
 
-            msg = String()
-            msg.data = "patrolling"
-            self.vision_publisher.publish(msg)
+                goal_pose = self.turtlebot4_navigator.getPoseStamped(position, TurtleBot4Directions(self.goals[i]['orientation']))
+                # Start new navigation task
+                self.navigation_task = self.navigator.goToPose(goal_pose)
 
-            self.navigation_task = self.navigator.goThroughPoses(goal_pose)
+                while not self.navigator.isTaskComplete():
+                    with open(self.state_path, 'r') as file:
+                        self.state = json.load(file)
+                    if self.state == 'None':
+                        self.get_logger().info('Patrol interrupted, stopping...')
+                        self.stop_task()
+                        return  
 
         # Determine goal pose based on user input
         elif command == 'wake up':
@@ -115,6 +134,10 @@ class NavigatorNode(Node):
         
 
         elif command in self.goals:
+            msg = String()
+            msg.data = "None"
+            self.vision_publisher.publish(msg)
+
             self.get_logger().info('Navigating to ' + command)
             if self.turtlebot4_navigator.getDockedStatus():
                 self.get_logger().info('Undocking...')
@@ -123,28 +146,35 @@ class NavigatorNode(Node):
             goal_pose = self.turtlebot4_navigator.getPoseStamped(position, TurtleBot4Directions(self.goals[command]['orientation']))
 
             # Stop current navigation task if any
-            if self.navigation_task is not None:
-                self.get_logger().info('Stopping current navigation task...')
-                self.navigator.cancelTask()
+            self.stop_task()
 
             # Start new navigation task
             self.navigation_task = self.navigator.goToPose(goal_pose)
+
+        elif command == 'body detected':
+            self.get_logger().info('Body detected, stopping current task...')
+            self.stop_task()
+            return
+
+        elif command == 'lying body detected':
+            self.get_logger().info('Lying body detected, stopping current task...')
+            self.stop_task()
+            return
 
         else:
             self.get_logger().warn(f"Invalid location entered({command}). Please enter a valid command from the following list: ")
             for i in self.goals:
                 self.get_logger().info(i)
             return
-
-    def vision_callback(self, msg):
-        if msg.data == 'body detected':
-            if self.navigation_task is not None:
-                self.get_logger().info('Stopping task due to detected body...')
-                self.navigator.cancelTask()
-                self.navigation_task = None
-
-        if msg.data == 'lying body detected':
-            if self.navigation_task is not None:
-                self.get_logger().info('Stopping task due to detected lying body...')
-                self.navigator.cancelTask()
-                self.navigation_task = None
+        
+    def save_state(self, state):
+        with open(self.state_path, 'w') as file:
+            json.dump(state, file, indent=4)
+            self.get_logger().info('state updated!')
+        
+    def stop_task(self):
+        if self.navigation_task is not None:
+            self.get_logger().info('Stopping current task...')
+            self.navigator.cancelTask()
+            self.navigation_task = None
+        return

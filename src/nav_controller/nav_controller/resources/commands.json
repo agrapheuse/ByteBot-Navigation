@@ -1,21 +1,21 @@
 {
-    "entrance": {
-        "position": [2.605, -4.070],
+    "stage": {
+        "position": [-2.415, 4.013],
         "orientation": 180,
         "description": "Entrance of the room"
     },
-    "corner": {
-        "position": [-3.0451, -6.086],
+    "bakery": {
+        "position": [-2.492, 10.745],
         "orientation": 90,
-        "description": "Top left corner of the room"
+        "description": "bread corner"
     },
-    "storage room": {
-        "position": [2.231, -2.489],
+    "cheese section": {
+        "position": [-3.746, 0.947],
         "orientation": 90,
         "description": "Cisco storage room"
     },
     "sleep": {
-        "position": [-0.0047, -0.018],
+        "position": [-0.813, 1.171],
         "orientation": 0,
         "description": "Dock"
     }
