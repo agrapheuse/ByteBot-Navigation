@@ -1,0 +1,22 @@
+{
+    "stage": {
+        "position": [-2.415, 4.013],
+        "orientation": 180,
+        "description": "Entrance of the room"
+    },
+    "bakery": {
+        "position": [-2.492, 10.745],
+        "orientation": 90,
+        "description": "bread corner"
+    },
+    "cheese section": {
+        "position": [-3.746, 0.947],
+        "orientation": 90,
+        "description": "Cisco storage room"
+    },
+    "sleep": {
+        "position": [-0.813, 1.171],
+        "orientation": 0,
+        "description": "Dock"
+    }
+}
